@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: aionlyforhelp
+    env: python
+    buildCommand: apt-get install -y tesseract-ocr && pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIONLYFORHELP - AI Tools for Everyone</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',sans-serif; background:#0a0a0f; color:white; }
+nav { display:flex; justify-content:space-between; align-items:center; padding:20px 60px; background:rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.08); position:sticky; top:0; z-index:100; backdrop-filter:blur(10px); }
+.logo { font-size:22px; font-weight:bold; background:linear-gradient(135deg,#667eea,#764ba2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.nav-links { display:flex; gap:30px; }
+.nav-links a { color:#888; text-decoration:none; font-size:14px; transition:color 0.3s; }
+.nav-links a:hover { color:white; }
+.nav-btn { background:linear-gradient(135deg,#667eea,#764ba2); border:none; padding:10px 25px; border-radius:25px; color:white; cursor:pointer; font-size:14px; }
+.hero { text-align:center; padding:100px 20px 80px; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; top:0; left:0; right:0; bottom:0; background:radial-gradient(ellipse at center, rgba(102,126,234,0.15) 0%, transparent 70%); }
+.badge { display:inline-block; background:rgba(102,126,234,0.2); border:1px solid rgba(102,126,234,0.4); padding:8px 20px; border-radius:25px; font-size:13px; color:#667eea; margin-bottom:25px; }
+.hero h1 { font-size:58px; font-weight:800; line-height:1.2; margin-bottom:20px; }
+.hero h1 span { background:linear-gradient(135deg,#667eea,#764ba2,#f093fb); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero p { font-size:18px; color:#888; max-width:600px; margin:0 auto 40px; line-height:1.7; }
+.hero-btns { display:flex; gap:15px; justify-content:center; flex-wrap:wrap; }
+.btn-primary { background:linear-gradient(135deg,#667eea,#764ba2); border:none; padding:16px 40px; border-radius:30px; color:white; cursor:pointer; font-size:16px; font-weight:600; transition:transform 0.2s; }
+.btn-primary:hover { transform:scale(1.05); }
+.btn-secondary { background:transparent; border:1px solid #333; padding:16px 40px; border-radius:30px; color:white; cursor:pointer; font-size:16px; transition:all 0.2s; }
+.btn-secondary:hover { border-color:#667eea; }
+.stats { display:flex; justify-content:center; gap:60px; padding:50px 20px; border-top:1px solid #111; border-bottom:1px solid #111; flex-wrap:wrap; }
+.stat h3 { font-size:36px; font-weight:800; background:linear-gradient(135deg,#667eea,#764ba2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.stat p { color:#888; font-size:14px; margin-top:5px; }
+.features { padding:80px 60px; }
+.section-title { text-align:center; font-size:38px; font-weight:700; margin-bottom:15px; }
+.section-sub { text-align:center; color:#888; font-size:16px; margin-bottom:60px; }
+.features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:25px; max-width:1100px; margin:0 auto; }
+.feature-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:30px; transition:all 0.3s; }
+.feature-card:hover { border-color:#667eea; transform:translateY(-5px); background:rgba(102,126,234,0.05); }
+.feature-icon { font-size:40px; margin-bottom:15px; }
+.feature-card h3 { font-size:18px; margin-bottom:10px; }
+.feature-card p { color:#888; font-size:14px; line-height:1.6; }
+.pricing { padding:80px 60px; background:rgba(255,255,255,0.01); }
+.pricing-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:25px; max-width:900px; margin:0 auto; }
+.price-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:35px; text-align:center; }
+.price-card.popular { border-color:#667eea; background:rgba(102,126,234,0.08); position:relative; }
+.popular-badge { position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#667eea,#764ba2); padding:5px 20px; border-radius:15px; font-size:12px; font-weight:600; }
+.price-card h3 { font-size:20px; margin-bottom:10px; }
+.price { font-size:48px; font-weight:800; margin:20px 0; }
+.price span { font-size:16px; color:#888; }
+.price-features { list-style:none; margin:25px 0; text-align:left; }
+.price-features li { padding:8px 0; color:#888; font-size:14px; border-bottom:1px solid #222; }
+.price-features li::before { content:'✅ '; }
+.price-btn { width:100%; padding:14px; border-radius:25px; border:none; cursor:pointer; font-size:15px; font-weight:600; margin-top:10px; }
+.price-btn.free { background:rgba(255,255,255,0.1); color:white; border:1px solid #333; }
+.price-btn.paid { background:linear-gradient(135deg,#667eea,#764ba2); color:white; }
+.cta { text-align:center; padding:80px 20px; }
+.cta h2 { font-size:42px; font-weight:700; margin-bottom:15px; }
+.cta p { color:#888; font-size:16px; margin-bottom:40px; }
+.email-form { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.email-form input { padding:14px 25px; border-radius:30px; border:1px solid #333; background:#1a1a2e; color:white; font-size:15px; width:320px; outline:none; }
+.email-form input:focus { border-color:#667eea; }
+footer { padding:30px 60px; border-top:1px solid #111; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; }
+footer p { color:#555; font-size:13px; }
+</style>
+</head>
+<body>
+<nav>
+    <div class="logo">🤖 AIONLYFORHELP</div>
+    <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#contact">Contact</a>
+    </div>
+    <button class="nav-btn" onclick="window.location.href='/tool'">Try Free →</button>
+</nav>
+
+<section class="hero">
+    <div class="badge">🚀 AI Tools for Everyone</div>
+    <h1>Your Personal<br><span>AI Assistant</span><br>is Here</h1>
+    <p>Upload any PDF and chat with it instantly. Get summaries, key points, and answers in Hindi & English. Free to start!</p>
+    <div class="hero-btns">
+        <button class="btn-primary" onclick="window.location.href='/tool'">🚀 Start Free Trial</button>
+        <button class="btn-secondary">▶ Watch Demo</button>
+    </div>
+</section>
+
+<section class="stats">
+    <div class="stat"><h3>3</h3><p>Free PDFs to start</p></div>
+    <div class="stat"><h3>2</h3><p>Languages supported</p></div>
+    <div class="stat"><h3>100%</h3><p>AI Powered</p></div>
+    <div class="stat"><h3>24/7</h3><p>Always available</p></div>
+</section>
+
+<section class="features" id="features">
+    <h2 class="section-title">Everything You Need</h2>
+    <p class="section-sub">Powerful AI tools to make your life easier</p>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">📄</div>
+            <h3>PDF Chat</h3>
+            <p>Upload any PDF and ask questions. Get instant answers from your documents in seconds.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📝</div>
+            <h3>Auto Summary</h3>
+            <p>Get a complete summary of any PDF with one click. Save hours of reading time.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Key Points</h3>
+            <p>Extract the most important points from any document automatically.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🇮🇳</div>
+            <h3>Hindi Support</h3>
+            <p>Get answers in Hindi or English. Made specially for Indian users.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Mobile Friendly</h3>
+            <p>Works perfectly on your phone, tablet and computer. Use anywhere anytime.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Super Fast</h3>
+            <p>Powered by latest AI technology. Get answers in under 3 seconds.</p>
+        </div>
+    </div>
+</section>
+
+<section class="pricing" id="pricing">
+    <h2 class="section-title">Simple Pricing</h2>
+    <p class="section-sub">Start free, upgrade when you need more</p>
+    <div class="pricing-grid">
+        <div class="price-card">
+            <h3>Free Trial</h3>
+            <div class="price">₹0<span>/month</span></div>
+            <ul class="price-features">
+                <li>3 PDF uploads</li>
+                <li>Ask unlimited questions</li>
+                <li>Hindi + English</li>
+                <li>Auto summary</li>
+            </ul>
+            <button class="price-btn free" onclick="window.location.href='/tool'">Start Free</button>
+        </div>
+        <div class="price-card popular">
+            <div class="popular-badge">⭐ Most Popular</div>
+            <h3>Premium</h3>
+            <div class="price">₹299<span>/month</span></div>
+            <ul class="price-features">
+                <li>Unlimited PDFs</li>
+                <li>Ask unlimited questions</li>
+                <li>Hindi + English</li>
+                <li>Auto summary</li>
+                <li>Priority support</li>
+                <li>New features first</li>
+            </ul>
+            <button class="price-btn paid">Upgrade Now</button>
+        </div>
+    </div>
+</section>
+
+<section class="cta" id="contact">
+    <h2>Ready to Get Started? 🚀</h2>
+    <p>Join thousands of students and professionals using AIONLYFORHELP</p>
+    <div class="email-form">
+        <input type="email" id="ctaEmail" placeholder="Enter your email..."/>
+        <button class="btn-primary" onclick="startTrial()">Start Free Trial →</button>
+    </div>
+</section>
+
+<footer>
+    <p>© 2024 AIONLYFORHELP. Made with ❤️ in India</p>
+    <p>Contact: aiforhelp2007@gmail.com</p>
+</footer>
+
+<script>
+function startTrial() {
+    const email = document.getElementById('ctaEmail').value;
+    if (!email) { alert('Please enter your email!'); return; }
+    window.location.href = '/tool?email=' + email;
+}
+</script>
+</body>
+</html>

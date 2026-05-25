@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Tool - AIONLYFORHELP</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',sans-serif; background:#0a0a0f; color:white; min-height:100vh; }
+nav { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:rgba(255,255,255,0.03); border-bottom:1px solid #222; }
+.logo { font-size:18px; font-weight:bold; background:linear-gradient(135deg,#667eea,#764ba2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; cursor:pointer; }
+.trial-badge { background:rgba(102,126,234,0.2); border:1px solid rgba(102,126,234,0.4); padding:6px 15px; border-radius:20px; font-size:13px; color:#667eea; }
+.main { display:grid; grid-template-columns:300px 1fr; height:calc(100vh - 55px); }
+.sidebar { background:#111118; border-right:1px solid #222; padding:20px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; }
+.email-section { background:#13131f; border-radius:12px; padding:15px; border:1px solid #222; }
+.email-section h4 { font-size:13px; color:#888; margin-bottom:8px; }
+.email-input { width:100%; padding:10px 14px; border-radius:20px; border:1px solid #333; background:#1a1a2e; color:white; font-size:13px; outline:none; margin-bottom:8px; }
+.email-input:focus { border-color:#667eea; }
+.email-btn { width:100%; padding:10px; border-radius:20px; background:linear-gradient(135deg,#667eea,#764ba2); border:none; color:white; cursor:pointer; font-size:13px; }
+.trial-info { background:#13131f; border-radius:12px; padding:15px; border:1px solid #222; display:none; }
+.trial-info .remaining { font-size:24px; font-weight:bold; color:#667eea; }
+.trial-info p { color:#888; font-size:12px; margin-top:4px; }
+.progress-bar { background:#222; border-radius:10px; height:6px; margin-top:10px; }
+.progress-fill { background:linear-gradient(135deg,#667eea,#764ba2); height:100%; border-radius:10px; transition:width 0.5s; }
+.upgrade-btn { width:100%; padding:12px; border-radius:20px; background:linear-gradient(135deg,#f093fb,#f5576c); border:none; color:white; cursor:pointer; font-size:13px; font-weight:600; display:none; }
+.upload-area { border:2px dashed #333; border-radius:15px; padding:20px 15px; text-align:center; cursor:pointer; transition:all 0.3s; }
+.upload-area:hover { border-color:#667eea; }
+.upload-area .icon { font-size:35px; margin-bottom:8px; }
+.upload-area p { color:#888; font-size:12px; }
+.upload-area input { display:none; }
+.upload-btn { background:linear-gradient(135deg,#667eea,#764ba2); border:none; padding:10px; border-radius:20px; color:white; cursor:pointer; font-size:13px; margin-top:10px; width:100%; }
+.pdf-info { background:#13131f; border-radius:12px; padding:12px; border:1px solid #222; display:none; }
+.pdf-info .name { color:#667eea; font-size:13px; font-weight:bold; word-break:break-all; }
+.pdf-info .pages { color:#888; font-size:11px; margin-top:4px; }
+.lang-toggle { display:flex; gap:8px; }
+.lang-btn { flex:1; padding:10px; border-radius:20px; border:1px solid #333; background:#13131f; color:#888; cursor:pointer; font-size:13px; transition:all 0.3s; }
+.lang-btn.active { background:linear-gradient(135deg,#667eea,#764ba2); border-color:transparent; color:white; }
+.action-btn { padding:11px; border-radius:10px; border:1px solid #333; background:#13131f; color:white; cursor:pointer; font-size:13px; transition:all 0.3s; text-align:left; width:100%; }
+.action-btn:hover { border-color:#667eea; background:#1a1a2e; }
+.speak-toggle { display:flex; align-items:center; gap:10px; padding:10px; background:#13131f; border-radius:10px; border:1px solid #222; }
+.speak-toggle label { font-size:13px; color:#888; }
+.toggle-switch { position:relative; width:40px; height:22px; }
+.toggle-switch input { opacity:0; width:0; height:0; }
+.slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#333; border-radius:22px; transition:0.3s; }
+.slider:before { position:absolute; content:""; height:16px; width:16px; left:3px; bottom:3px; background:white; border-radius:50%; transition:0.3s; }
+input:checked + .slider { background:linear-gradient(135deg,#667eea,#764ba2); }
+input:checked + .slider:before { transform:translateX(18px); }
+.clear-btn { width:100%; padding:10px; border-radius:20px; background:transparent; border:1px solid #333; color:#888; cursor:pointer; font-size:12px; }
+.clear-btn:hover { border-color:#f5576c; color:#f5576c; }
+.content { display:flex; flex-direction:column; background:#0d0d15; }
+.chat-area { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:12px; }
+.welcome { text-align:center; padding:50px 20px; color:#444; }
+.welcome .big { font-size:55px; margin-bottom:12px; }
+.welcome h2 { color:#666; margin-bottom:8px; font-size:18px; }
+.welcome p { font-size:13px; }
+.message { max-width:80%; padding:14px 18px; border-radius:15px; font-size:14px; line-height:1.6; }
+.message.ai { background:#1a1a2e; border:1px solid #333; align-self:flex-start; border-bottom-left-radius:4px; }
+.message.user { background:linear-gradient(135deg,#667eea,#764ba2); align-self:flex-end; border-bottom-right-radius:4px; }
+.msg-label { font-size:11px; opacity:0.6; margin-bottom:5px; font-weight:bold; display:flex; justify-content:space-between; }
+.download-btn { background:rgba(102,126,234,0.3); border:none; color:#667eea; padding:3px 8px; border-radius:10px; cursor:pointer; font-size:11px; }
+.input-area { padding:15px 20px; border-top:1px solid #222; display:flex; gap:10px; background:#111118; align-items:center; }
+.input-area input { flex:1; padding:13px 18px; border-radius:25px; border:1px solid #333; background:#1a1a2e; color:white; font-size:14px; outline:none; }
+.input-area input:focus { border-color:#667eea; }
+.input-area input::placeholder { color:#555; }
+.send-btn { background:linear-gradient(135deg,#667eea,#764ba2); border:none; width:48px; height:48px; border-radius:50%; color:white; cursor:pointer; font-size:18px; flex-shrink:0; }
+.voice-btn { background:#13131f; border:1px solid #333; width:48px; height:48px; border-radius:50%; color:white; cursor:pointer; font-size:18px; flex-shrink:0; transition:all 0.3s; }
+.voice-btn.recording { background:red; border-color:red; }
+.loading { display:flex; gap:5px; align-items:center; padding:14px 18px; background:#1a1a2e; border-radius:15px; border:1px solid #333; width:fit-content; }
+.dot { width:7px; height:7px; background:#667eea; border-radius:50%; animation:bounce 1s infinite; }
+.dot:nth-child(2) { animation-delay:0.2s; }
+.dot:nth-child(3) { animation-delay:0.4s; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-thumb { background:#333; border-radius:3px; }
+@media(max-width:768px) { .main{grid-template-columns:1fr} .sidebar{display:none} }
+</style>
+</head>
+<body>
+<nav>
+    <div class="logo" onclick="window.location.href='/'">🤖 AIONLYFORHELP</div>
+    <div class="trial-badge" id="trialBadge">Free Trial</div>
+</nav>
+<div class="main">
+    <div class="sidebar">
+        <div class="email-section">
+            <h4>Enter your email to start:</h4>
+            <input type="text" class="email-input" id="emailInput" placeholder="your@email.com"/>
+            <button class="email-btn" onclick="startTrial()">Start Free Trial →</button>
+        </div>
+        <div class="trial-info" id="trialInfo">
+            <div class="remaining" id="remainingCount">3</div>
+            <p>Free uploads remaining</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width:100%"></div>
+            </div>
+        </div>
+        <button class="upgrade-btn" id="upgradeBtn" onclick="upgrade()">⭐ Upgrade - ₹299/month</button>
+        <div class="upload-area" onclick="document.getElementById('pdffile').click()">
+            <div class="icon">📄</div>
+            <p>Upload PDF or Photo of notebook</p>
+            <input type="file" id="pdffile" accept=".pdf,.jpg,.jpeg,.png,.webp" multiple onchange="uploadFiles()">
+            <button class="upload-btn">Choose File</button>
+        </div>
+        <div class="pdf-info" id="pdfInfo">
+            <div class="name" id="pdfName"></div>
+            <div class="pages" id="pdfPages"></div>
+        </div>
+        <div class="lang-toggle">
+            <button class="lang-btn active" id="btnEn" onclick="setLang('english')">🇬🇧 English</button>
+            <button class="lang-btn" id="btnHi" onclick="setLang('hindi')">🇮🇳 Hindi</button>
+        </div>
+        <div class="speak-toggle">
+            <label>🔊 AI Speaks Answers</label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="speakToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <button class="action-btn" onclick="quickAction('summarize')">📝 Summarize</button>
+        <button class="action-btn" onclick="quickAction('keypoints')">🎯 Key Points</button>
+        <button class="action-btn" onclick="quickAction('topics')">📚 Main Topics</button>
+        <button class="action-btn" onclick="quickAction('simplify')">✨ Simplify</button>
+        <button class="action-btn" onclick="quickAction('questions')">❓ Generate Questions</button>
+        <button class="action-btn" onclick="downloadAllChat()">⬇️ Download All Chat</button>
+        <button class="clear-btn" onclick="clearChat()">🗑️ Clear Chat</button>
+    </div>
+    <div class="content">
+        <div class="chat-area" id="chatArea">
+            <div class="welcome">
+                <div class="big">🤖</div>
+                <h2>Welcome to AIONLYFORHELP!</h2>
+                <p>Enter your email and upload a PDF or photo to get started</p>
+            </div>
+        </div>
+        <div class="input-area">
+            <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Voice Input">🎤</button>
+            <input type="text" id="question" placeholder="Ask anything or use 🎤 voice..."
+                onkeypress="if(event.key==='Enter') askQuestion()"/>
+            <button class="send-btn" onclick="askQuestion()">➤</button>
+        </div>
+    </div>
+</div>
+<script>
+let userEmail = '';
+let sessionId = '';
+let language = 'english';
+let chatHistory = [];
+let recognition = null;
+let isRecording = false;
+let isAsking = false;
+
+window.onload = function() {
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get('email');
+    if (email) {
+        document.getElementById('emailInput').value = email;
+        startTrial();
+    }
+    setupVoice();
+}
+
+function setupVoice() {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SR();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.onresult = function(e) {
+            const text = e.results[0][0].transcript;
+            document.getElementById('question').value = text;
+            stopRecording();
+            askQuestion();
+        };
+        recognition.onend = function() { stopRecording(); };
+        recognition.onerror = function() { stopRecording(); };
+    }
+}
+
+function toggleVoice() {
+    if (!recognition) { alert('Voice not supported in this browser. Use Chrome!'); return; }
+    if (isRecording) {
+        recognition.stop();
+        stopRecording();
+    } else {
+        recognition.lang = language === 'hindi' ? 'hi-IN' : 'en-US';
+        recognition.start();
+        isRecording = true;
+        document.getElementById('voiceBtn').className = 'voice-btn recording';
+        document.getElementById('voiceBtn').innerText = '⏹️';
+    }
+}
+
+function stopRecording() {
+    isRecording = false;
+    document.getElementById('voiceBtn').className = 'voice-btn';
+    document.getElementById('voiceBtn').innerText = '🎤';
+}
+
+function speakText(text) {
+    if (!document.getElementById('speakToggle').checked) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = language === 'hindi' ? 'hi-IN' : 'en-US';
+    utterance.rate = 0.9;
+    utterance.volume = 1;
+    window.speechSynthesis.speak(utterance);
+}
+
+async function startTrial() {
+    const email = document.getElementById('emailInput').value.trim();
+    if (!email) { alert('Please enter your email!'); return; }
+    userEmail = email;
+    try {
+        const res = await fetch('/get_trial', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({email: email})
+        });
+        const data = await res.json();
+        if (data.error) { alert(data.error); return; }
+        updateTrialUI(data.remaining);
+        addMessage('ai', 'Welcome! 🎉 You have ' + data.remaining + ' free uploads remaining. Upload a PDF or photo to start!');
+    } catch(e) {
+        alert('Connection error. Please try again!');
+    }
+}
+
+function updateTrialUI(remaining) {
+    document.getElementById('trialInfo').style.display = 'block';
+    document.getElementById('remainingCount').innerText = remaining;
+    document.getElementById('progressFill').style.width = (remaining/3*100) + '%';
+    document.getElementById('trialBadge').innerText = remaining + ' uploads left';
+    if (remaining === 0) {
+        document.getElementById('upgradeBtn').style.display = 'block';
+        document.getElementById('trialBadge').innerText = '⭐ Upgrade Now';
+    }
+}
+
+async function uploadFiles() {
+    if (!userEmail) { alert('Please enter your email first!'); return; }
+    const files = document.getElementById('pdffile').files;
+    if (!files.length) return;
+    for (let file of files) {
+        addMessage('user', 'Uploading: ' + file.name);
+        showLoading();
+        try {
+            const formData = new FormData();
+            formData.append('pdf', file);
+            formData.append('email', userEmail);
+            const res = await fetch('/upload', {method:'POST', body:formData});
+            const data = await res.json();
+            removeLoading();
+            if (data.error) { addMessage('ai', '⚠️ ' + data.error); return; }
+            sessionId = data.session_id;
+            updateTrialUI(data.remaining);
+            document.getElementById('pdfInfo').style.display = 'block';
+            document.getElementById('pdfName').innerText = '📄 ' + file.name;
+            document.getElementById('pdfPages').innerText = data.pages + ' pages loaded';
+            addMessage('ai', '✅ ' + data.message + ' Ask me anything!');
+            chatHistory = [];
+        } catch(e) {
+            removeLoading();
+            addMessage('ai', '⚠️ Upload failed. Please try again!');
+        }
+    }
+}
+
+function setLang(lang) {
+    language = lang;
+    document.getElementById('btnEn').className = 'lang-btn' + (lang==='english' ? ' active' : '');
+    document.getElementById('btnHi').className = 'lang-btn' + (lang==='hindi' ? ' active' : '');
+    if (recognition) recognition.lang = lang === 'hindi' ? 'hi-IN' : 'en-US';
+}
+
+async function quickAction(action) {
+    const prompts = {
+        summarize: 'Give me a complete and detailed summary of this content',
+        keypoints: 'Extract the most important key points as a numbered list',
+        topics: 'List all main topics covered in this content',
+        simplify: 'Explain this content in very simple words that a student can understand',
+        questions: 'Generate 10 important exam questions with answers from this content'
+    }
+    document.getElementById('question').value = prompts[action];
+    askQuestion();
+}
+
+async function askQuestion() {
+    if (isAsking) return;
+    const q = document.getElementById('question').value.trim();
+    if (!q) return;
+    if (!sessionId) { addMessage('ai', '⚠️ Please upload a file first!'); return; }
+    isAsking = true;
+    document.getElementById('question').value = '';
+    addMessage('user', q);
+    chatHistory.push({role: 'user', content: q});
+    showLoading();
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 35000);
+        const res = await fetch('/ask', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({
+                question: q,
+                session_id: sessionId,
+                language: language,
+                history: chatHistory.slice(-4)
+            }),
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        const data = await res.json();
+        removeLoading();
+        chatHistory.push({role: 'assistant', content: data.answer});
+        addMessage('ai', data.answer, true);
+        speakText(data.answer);
+    } catch(e) {
+        removeLoading();
+        addMessage('ai', '⚠️ Request timed out. Please ask again!');
+    }
+    isAsking = false;
+}
+
+function downloadAllChat() {
+    if (chatHistory.length === 0) { alert('No chat to download!'); return; }
+    let content = 'AIONLYFORHELP - Chat History\n';
+    content += '================================\n\n';
+    chatHistory.forEach(function(msg) {
+        if (msg.role === 'user') {
+            content += 'YOU: ' + msg.content + '\n\n';
+        } else {
+            content += 'AI: ' + msg.content + '\n\n';
+            content += '--------------------------------\n\n';
+        }
+    });
+    const blob = new Blob([content], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'aionlyforhelp_chat_' + Date.now() + '.txt';
+    a.click();
+}
+
+function clearChat() {
+    const chat = document.getElementById('chatArea');
+    chat.innerHTML = '<div class="welcome"><div class="big">🤖</div><h2>Chat cleared!</h2><p>Ask a new question</p></div>';
+    chatHistory = [];
+    sessionId = '';
+    window.speechSynthesis.cancel();
+}
+
+function upgrade() {
+    alert('Contact: aiforhelp2007@gmail.com for premium upgrade!');
+}
+
+function addMessage(type, text, showDownload=false) {
+    const chat = document.getElementById('chatArea');
+    const welcome = chat.querySelector('.welcome');
+    if (welcome) welcome.remove();
+    const div = document.createElement('div');
+    div.className = 'message ' + type;
+    let labelHtml = '<div class="msg-label"><span>' + (type==='ai' ? '🤖 AI' : '👤 You') + '</span>';
+    if (showDownload && type === 'ai') {
+        const safeText = text.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/'/g, "\\'");
+        labelHtml += '<button class="download-btn" onclick="downloadSingle(\'' + safeText.substring(0, 100) + '\')">⬇️ Save</button>';
+    }
+    labelHtml += '</div>';
+    div.innerHTML = labelHtml + '<div>' + text.replace(/\n/g, '<br>') + '</div>';
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function downloadSingle(preview) {
+    const lastAI = chatHistory.filter(h => h.role === 'assistant').pop();
+    if (!lastAI) return;
+    const blob = new Blob([lastAI.content], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'answer_' + Date.now() + '.txt';
+    a.click();
+}
+
+function showLoading() {
+    const chat = document.getElementById('chatArea');
+    const div = document.createElement('div');
+    div.className = 'loading'; div.id = 'loading';
+    div.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function removeLoading() {
+    const l = document.getElementById('loading');
+    if (l) l.remove();
+}
+</script>
+</body>
+</html>
